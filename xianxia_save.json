@@ -1,0 +1,37 @@
+{
+  "Name": "hitoshi",
+  "Realm": 1,
+  "Layer": 4,
+  "HP": 210,
+  "MaxHP": 230,
+  "Atk": 30,
+  "Def": 18,
+  "Cult": 0,
+  "MaxCult": 500,
+  "Stones": 50,
+  "TotalKills": 0,
+  "Inventory": [
+    {
+      "Name": "回春丹",
+      "Type": 0,
+      "Desc": "恢复50点生命",
+      "Value": 10,
+      "HP": 50,
+      "Cult": 0,
+      "Atk": 0,
+      "Def": 0,
+      "Amount": 3
+    },
+    {
+      "Name": "聚气散",
+      "Type": 0,
+      "Desc": "增加100点修为",
+      "Value": 20,
+      "HP": 0,
+      "Cult": 100,
+      "Atk": 0,
+      "Def": 0,
+      "Amount": 2
+    }
+  ]
+}

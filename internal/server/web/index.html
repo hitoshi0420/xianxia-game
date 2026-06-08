@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>修仙录 — 凡人修仙传</title>
+<style>
+/* ═══════════════════════════════════════════ */
+/* 水墨风修仙游戏 — 全局样式 */
+/* ═══════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+XiaoWei&display=swap');
+
+:root {
+  --bg: #0a0a14;
+  --panel: #141428cc;
+  --panel2: #1a1a30cc;
+  --gold: #ffd700;
+  --jade: #00d2a0;
+  --blood: #ff6b6b;
+  --spirit: #9b59b6;
+  --sky: #74b9ff;
+  --ink: #e0e0e0;
+  --gray: #6b7280;
+  --border: #2a2a45;
+  --glow-gold: 0 0 20px #ffd70044;
+  --glow-jade: 0 0 20px #00d2a044;
+  --glow-red: 0 0 20px #ff6b6b44;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'ZCOOL XiaoWei', 'Microsoft YaHei', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 背景粒子 */
+#particles {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 0;
+}
+.particle {
+  position: absolute;
+  background: var(--gold);
+  border-radius: 50%;
+  animation: floatUp linear infinite;
+  opacity: 0;
+}
+@keyframes floatUp {
+  0% { transform: translateY(100vh) scale(0); opacity: 0; }
+  20% { opacity: 0.8; }
+  80% { opacity: 0.3; }
+  100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+}
+
+#app {
+  position: relative; z-index: 1;
+  width: 900px; max-width: 95vw; min-height: 600px;
+}
+
+/* 水墨山纹 */
+.mountain-bg {
+  position: fixed; bottom: 0; left: 0; width: 100%; height: 200px;
+  background: linear-gradient(180deg, transparent, #1a1a3088, #141428cc);
+  pointer-events: none; z-index: 0;
+}
+
+/* ═══════════════════════════════════════════ */
+/* 标题页 */
+/* ═══════════════════════════════════════════ */
+.title-screen { text-align: center; padding: 40px 20px; }
+
+.title-logo {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 72px;
+  background: linear-gradient(180deg, #ffd700, #b8860b);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  filter: drop-shadow(0 0 30px #ffd70066);
+  animation: titleGlow 3s ease-in-out infinite;
+}
+@keyframes titleGlow {
+  0%, 100% { filter: drop-shadow(0 0 20px #ffd70066); }
+  50% { filter: drop-shadow(0 0 40px #ffd700aa); }
+}
+
+.title-sub { font-size: 18px; color: var(--jade); margin: 10px 0 30px; letter-spacing: 8px; }
+
+.realm-badges { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin: 20px 0; }
+.realm-badge {
+  padding: 4px 12px; border-radius: 20px; font-size: 12px;
+  background: var(--panel); border: 1px solid var(--border);
+  color: var(--gray);
+}
+
+.title-btn {
+  display: block; width: 220px; margin: 12px auto; padding: 14px 32px;
+  border: 2px solid var(--gold); border-radius: 8px;
+  background: transparent; color: var(--gold); font-size: 18px;
+  font-family: inherit; cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 4px;
+}
+.title-btn:hover {
+  background: #ffd70022; box-shadow: var(--glow-gold); transform: translateY(-2px);
+}
+.title-btn.primary {
+  background: linear-gradient(135deg, #b8860b, #ffd700);
+  color: #1a1a2e; font-weight: bold; border: none;
+}
+.title-btn.primary:hover { box-shadow: 0 0 30px #ffd70088; }
+
+.name-input {
+  display: block; width: 260px; margin: 10px auto; padding: 12px 16px;
+  border: 2px solid var(--gold); border-radius: 8px; outline: none;
+  background: #ffffff0a; color: var(--gold); font-size: 20px;
+  text-align: center; font-family: inherit; letter-spacing: 4px;
+}
+.name-input::placeholder { color: #ffffff33; }
+.name-input:focus { box-shadow: var(--glow-gold); }
+
+/* ═══════════════════════════════════════════ */
+/* 主游戏界面 */
+/* ═══════════════════════════════════════════ */
+.game-layout { display: grid; grid-template-columns: 280px 1fr; gap: 16px; padding: 16px; }
+
+.panel {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px;
+  backdrop-filter: blur(10px);
+}
+
+.stat-panel { }
+.stat-panel .name { font-size: 22px; font-weight: bold; margin-bottom: 4px; }
+.stat-panel .realm {
+  font-size: 16px; font-weight: bold; margin-bottom: 12px;
+  padding: 4px 10px; border-radius: 6px; display: inline-block;
+  background: #ffffff0a;
+}
+.realm-realm0 { color: #b2bec3; }
+.realm-realm1 { color: #74b9ff; }
+.realm-realm2 { color: #00d2a0; }
+.realm-realm3 { color: #ffd700; }
+.realm-realm4 { color: #9b59b6; }
+.realm-realm5 { color: #00cec9; }
+.realm-realm6 { color: #ff6b6b; }
+.realm-realm7 { color: #ffffff; }
+.realm-realm8 { color: #ffd700; }
+
+.stat-row { display: flex; justify-content: space-between; align-items: center; margin: 6px 0; font-size: 14px; }
+.stat-row .label { color: var(--gray); }
+.stat-row .value { font-weight: bold; }
+
+.bar-wrap { height: 8px; background: #ffffff0a; border-radius: 4px; margin: 4px 0 8px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+.bar-hp { background: linear-gradient(90deg, #ff6b6b, #ffd700, #00d2a0); }
+.bar-cult { background: linear-gradient(90deg, #4a90d9, #74b9ff); }
+
+.action-panel { }
+.action-panel h3 { font-size: 18px; margin-bottom: 12px; color: var(--gold); }
+.action-btn {
+  display: block; width: 100%; padding: 10px 16px; margin: 4px 0;
+  border: 1px solid var(--border); border-radius: 8px;
+  background: transparent; color: var(--ink); font-size: 15px;
+  font-family: inherit; cursor: pointer; text-align: left;
+  transition: all 0.2s ease;
+}
+.action-btn:hover { background: #ffffff0a; border-color: var(--gold); color: var(--gold); }
+.action-btn.danger { color: var(--blood); }
+.action-btn.danger:hover { border-color: var(--blood); background: #ff6b6b11; }
+.action-btn.breakthrough {
+  color: var(--spirit); border-color: var(--spirit); font-weight: bold;
+}
+.action-btn.breakthrough:hover {
+  background: #9b59b611; box-shadow: var(--glow-gold);
+}
+
+.log-panel { grid-column: 1 / -1; max-height: 200px; overflow-y: auto; }
+.log-panel h3 { color: var(--gold); margin-bottom: 8px; font-size: 16px; }
+.log-entry { color: var(--gray); font-size: 13px; line-height: 1.8; border-bottom: 1px solid #ffffff05; padding: 2px 0; }
+.log-panel::-webkit-scrollbar { width: 4px; }
+.log-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ═══════════════════════════════════════════ */
+/* 战斗界面 */
+/* ═══════════════════════════════════════════ */
+.combat-screen { padding: 16px; }
+.combat-vs { display: grid; grid-template-columns: 1fr auto 1fr; gap: 20px; align-items: center; text-align: center; margin-bottom: 20px; }
+
+.combat-card { padding: 16px; border-radius: 12px; background: var(--panel2); border: 1px solid var(--border); }
+.combat-card.player { border-color: var(--sky); }
+.combat-card.monster { border-color: var(--blood); }
+.combat-card h3 { font-size: 18px; margin-bottom: 8px; }
+.combat-card .hp-text { font-size: 13px; color: var(--gray); }
+.combat-card.damaged { animation: shake 0.4s ease; }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.vs-icon { font-size: 36px; color: var(--gold); animation: pulse 1s ease-in-out infinite; }
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.1); opacity: 1; }
+}
+
+.combat-actions { display: flex; gap: 8px; margin: 12px 0; flex-wrap: wrap; }
+.combat-btn {
+  flex: 1; min-width: 80px; padding: 10px 16px;
+  border: 1px solid var(--border); border-radius: 8px;
+  background: transparent; color: var(--ink); font-size: 14px;
+  font-family: inherit; cursor: pointer; text-align: center;
+  transition: all 0.2s;
+}
+.combat-btn:hover { border-color: var(--gold); color: var(--gold); }
+.combat-btn.flee:hover { border-color: var(--blood); color: var(--blood); }
+
+.combat-log { max-height: 200px; overflow-y: auto; }
+.combat-log .log-msg {
+  padding: 4px 0; font-size: 14px; border-bottom: 1px solid #ffffff05;
+  animation: fadeIn 0.3s ease;
+}
+.combat-log .log-msg.crit { color: var(--blood); font-weight: bold; font-size: 15px; }
+.combat-log .log-msg.reward { color: var(--jade); font-weight: bold; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ═══════════════════════════════════════════ */
+/* 商店 */
+/* ═══════════════════════════════════════════ */
+.shop-screen { padding: 16px; }
+.shop-header { text-align: center; margin-bottom: 20px; }
+.shop-header h2 { color: var(--gold); font-size: 24px; }
+.shop-header .stones { color: var(--gold); font-size: 18px; }
+
+.shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+.shop-card {
+  background: var(--panel2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px; text-align: center;
+  transition: all 0.3s ease; cursor: pointer;
+}
+.shop-card:hover { border-color: var(--gold); transform: translateY(-4px); box-shadow: var(--glow-gold); }
+.shop-card .card-icon { font-size: 28px; margin-bottom: 8px; }
+.shop-card .card-name { font-size: 16px; font-weight: bold; margin-bottom: 4px; }
+.shop-card .card-desc { font-size: 12px; color: var(--gray); margin-bottom: 8px; }
+.shop-card .card-price { color: var(--gold); font-weight: bold; font-size: 14px; }
+.shop-card.disabled { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
+
+/* ═══════════════════════════════════════════ */
+/* 背包 */
+/* ═══════════════════════════════════════════ */
+.inv-screen { padding: 16px; }
+.inv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+.inv-card {
+  background: var(--panel2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px; cursor: pointer;
+  transition: all 0.3s;
+  display: flex; align-items: center; gap: 10px;
+}
+.inv-card:hover { border-color: var(--jade); background: #00d2a011; }
+.inv-card .inv-icon { font-size: 24px; }
+.inv-card .inv-info { flex: 1; }
+.inv-card .inv-name { font-size: 14px; font-weight: bold; }
+.inv-card .inv-desc { font-size: 11px; color: var(--gray); }
+.inv-card .inv-amount { color: var(--gold); font-weight: bold; }
+
+/* ═══════════════════════════════════════════ */
+/* 事件对话框 */
+/* ═══════════════════════════════════════════ */
+.event-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: #000000aa; z-index: 10;
+  display: flex; justify-content: center; align-items: center;
+  animation: fadeIn 0.3s ease;
+}
+.event-card {
+  background: var(--panel); border: 2px solid var(--spirit);
+  border-radius: 16px; padding: 32px; max-width: 500px; width: 90%;
+  box-shadow: 0 0 60px #9b59b644; animation: slideUp 0.4s ease;
+}
+@keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.event-card h2 { color: var(--gold); font-size: 22px; margin-bottom: 12px; text-align: center; }
+.event-card .event-desc { color: var(--ink); font-size: 15px; line-height: 1.8; margin-bottom: 20px; white-space: pre-line; }
+.event-choices { display: flex; flex-direction: column; gap: 8px; }
+.event-choice {
+  padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px;
+  background: transparent; color: var(--ink); font-size: 15px;
+  font-family: inherit; cursor: pointer; transition: all 0.2s;
+}
+.event-choice:hover { border-color: var(--spirit); background: #9b59b622; color: var(--spirit); }
+
+/* ═══════════════════════════════════════════ */
+/* 消息弹窗 */
+/* ═══════════════════════════════════════════ */
+.message-toast {
+  position: fixed; top: 30px; left: 50%; transform: translateX(-50%);
+  padding: 12px 24px; border-radius: 12px; font-size: 16px;
+  z-index: 20; animation: toastIn 0.4s ease, toastOut 0.4s ease 1.8s forwards;
+  background: var(--panel); border: 1px solid var(--gold);
+  color: var(--gold); box-shadow: var(--glow-gold); white-space: nowrap;
+}
+@keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(-20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+@keyframes toastOut { from { opacity: 1; } to { opacity: 0; } }
+
+/* ═══════════════════════════════════════════ */
+/* 修炼/突破/休息结果页 */
+/* ═══════════════════════════════════════════ */
+.result-screen { text-align: center; padding: 60px 20px; }
+.result-screen .result-icon { font-size: 48px; margin-bottom: 16px; animation: pulse 0.6s ease-out; }
+.result-screen .result-msg { font-size: 20px; line-height: 1.8; margin-bottom: 20px; white-space: pre-line; }
+.result-screen .result-msg.success { color: var(--jade); }
+.result-screen .result-msg.fail { color: var(--blood); }
+.result-screen .result-msg.breakthrough { color: var(--spirit); }
+
+/* ═══════════════════════════════════════════ */
+/* 游戏结束 / 胜利 */
+/* ═══════════════════════════════════════════ */
+.end-screen { text-align: center; padding: 60px 20px; }
+.end-screen h1 { font-size: 36px; margin-bottom: 20px; }
+.end-screen.gameover h1 { color: var(--blood); text-shadow: 0 0 30px #ff6b6b66; }
+.end-screen.victory h1 { color: var(--gold); text-shadow: 0 0 40px #ffd70088; animation: titleGlow 2s ease-in-out infinite; }
+.end-screen .end-stats { color: var(--gray); font-size: 16px; margin: 16px 0; line-height: 2; }
+
+/* ═══════════════════════════════════════════ */
+/* 返回按钮 */
+/* ═══════════════════════════════════════════ */
+.back-row { margin-top: 16px; text-align: center; }
+.back-btn {
+  padding: 8px 20px; border: 1px solid var(--border); border-radius: 8px;
+  background: transparent; color: var(--gray); font-size: 14px;
+  font-family: inherit; cursor: pointer; transition: all 0.2s;
+}
+.back-btn:hover { color: var(--ink); border-color: var(--ink); }
+
+/* 响应式 */
+@media (max-width: 640px) {
+  .game-layout { grid-template-columns: 1fr; }
+  .combat-vs { grid-template-columns: 1fr; }
+  .combat-actions { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div id="particles"></div>
+<div class="mountain-bg"></div>
+<div id="app"></div>
+
+<script>
+/* ═══════════════════════════════════════════ */
+/* 修仙录 — 前端应用 */
+/* ═══════════════════════════════════════════ */
+
+const API = '/api';
+
+// 背景粒子
+function createParticles() {
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 30; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.width = p.style.height = (Math.random() * 3 + 1) + 'px';
+    p.style.animationDuration = (Math.random() * 8 + 4) + 's';
+    p.style.animationDelay = (Math.random() * 5) + 's';
+    container.appendChild(p);
+  }
+}
+createParticles();
+
+// 通用 API 调用
+async function api(path, body) {
+  const opts = { method: body ? 'POST' : 'GET', headers: { 'Content-Type': 'application/json' } };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(API + path, opts);
+  return res.json();
+}
+
+function showToast(msg) {
+  const el = document.createElement('div');
+  el.className = 'message-toast';
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 2400);
+}
+
+// ═══════════════════════════════════════════
+// 主渲染函数
+// ═══════════════════════════════════════════
+let currentScreen = 'title';
+
+async function renderScreen() {
+  const state = await api('/state');
+  currentScreen = state.screen || 'title';
+  const app = document.getElementById('app');
+
+  if (currentScreen === 'title' || !state.player) {
+    app.innerHTML = renderTitle(state);
+  } else if (currentScreen === 'combat') {
+    app.innerHTML = renderCombat(state);
+  } else if (currentScreen === 'shop') {
+    app.innerHTML = renderShop(state);
+  } else if (currentScreen === 'event') {
+    app.innerHTML = renderMain(state); // event renders as overlay
+    renderEventOverlay(state);
+  } else if (currentScreen === 'cultivating') {
+    app.innerHTML = renderCultivating(state);
+  } else if (currentScreen === 'gameover') {
+    app.innerHTML = renderGameOver(state);
+  } else if (currentScreen === 'victory') {
+    app.innerHTML = renderVictory(state);
+  } else {
+    app.innerHTML = renderMain(state);
+  }
+
+  if (state.message && currentScreen !== 'event') {
+    showToast(state.message);
+  }
+}
+
+// ═══════════════════════════════════════════
+// 标题页
+// ═══════════════════════════════════════════
+function renderTitle(state) {
+  const hasSave = state.hasSave;
+  return `
+    <div class="title-screen">
+      <div class="title-logo">修仙录</div>
+      <div class="title-sub">—— 凡人修仙传 ——</div>
+      <div class="realm-badges">
+        <span class="realm-badge" style="color:#74b9ff">炼气</span>
+        <span class="realm-badge" style="color:#00d2a0">筑基</span>
+        <span class="realm-badge" style="color:#ffd700">金丹</span>
+        <span class="realm-badge" style="color:#9b59b6">元婴</span>
+        <span class="realm-badge" style="color:#00cec9">化神</span>
+        <span class="realm-badge" style="color:#ff6b6b">渡劫</span>
+        <span class="realm-badge" style="color:#fff">大乘</span>
+      </div>
+      <div style="margin-top:30px">
+        <div id="title-btns">
+          ${hasSave
+            ? `<button class="title-btn primary" onclick="startNewGame()">新 游 戏</button>
+               <button class="title-btn" onclick="loadGame()">继 续 游 戏</button>`
+            : `<button class="title-btn primary" onclick="startNewGame()">开 始 修 仙</button>`
+          }
+        </div>
+        <div id="name-section" style="display:none; margin-top: 20px;">
+          <input class="name-input" id="nameInput" placeholder="请输入道号" maxlength="10" autocomplete="off">
+          <button class="title-btn primary" style="margin-top:12px" onclick="confirmName()">踏入仙途</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function startNewGame() {
+  document.getElementById('title-btns').style.display = 'none';
+  document.getElementById('name-section').style.display = 'block';
+  document.getElementById('nameInput').focus();
+}
+
+function confirmName() {
+  const name = document.getElementById('nameInput').value.trim() || '无名修士';
+  api('/new-game', { name }).then(renderScreen);
+}
+
+async function loadGame() {
+  await api('/load');
+  renderScreen();
+}
+
+// ═══════════════════════════════════════════
+// 主界面
+// ═══════════════════════════════════════════
+function renderMain(state) {
+  const p = state.player;
+  return `
+    <div class="game-layout">
+      <div class="panel stat-panel">
+        <div class="name" style="color: var(--ink)">${esc(p.name)}</div>
+        <div class="realm realm-realm${p.realmIdx}">${p.realm} · ${p.layer}层</div>
+
+        <div class="stat-row"><span class="label">生命</span><span class="value">${p.hp}/${p.maxHp}</span></div>
+        <div class="bar-wrap"><div class="bar-fill bar-hp" style="width:${pct(p.hp,p.maxHp)}%"></div></div>
+
+        <div class="stat-row"><span class="label">修为</span><span class="value">${fmt(p.cult)}/${fmt(p.maxCult)}</span></div>
+        <div class="bar-wrap"><div class="bar-fill bar-cult" style="width:${pct(p.cult,p.maxCult)}%"></div></div>
+
+        <div class="stat-row"><span class="label">💎 灵石</span><span class="value" style="color:var(--gold)">${fmt(p.stones)}</span></div>
+        <div class="stat-row"><span class="label">⚔️ 攻击</span><span class="value">${p.atk}</span></div>
+        <div class="stat-row"><span class="label">🛡️ 防御</span><span class="value">${p.def}</span></div>
+        <div class="stat-row"><span class="label">💀 击杀</span><span class="value">${p.totalKills}</span></div>
+      </div>
+
+      <div class="panel action-panel">
+        <h3>✦ 行动 ✦</h3>
+        <button class="action-btn" onclick="cultivate()">🧘 修炼</button>
+        <button class="action-btn" onclick="startCombat()">⚔️ 外出历练</button>
+        <button class="action-btn" onclick="enterShop()">🏪 坊市交易</button>
+        <button class="action-btn" onclick="showInventory()">🎒 背包</button>
+        <button class="action-btn breakthrough ${p.cult >= p.maxCult ? 'ready' : ''}" onclick="breakthrough()">
+          ⚡ 突破瓶颈 ${p.cult >= p.maxCult ? '【可突破！】' : ''}
+        </button>
+        <button class="action-btn" onclick="rest()">💤 打坐休息</button>
+        <button class="action-btn" onclick="saveGame()">💾 保存进度</button>
+        <button class="action-btn danger" onclick="location.reload()">🚪 返回标题</button>
+      </div>
+
+      <div class="panel log-panel">
+        <h3>📜 修仙日志</h3>
+        ${(p.logs || []).slice().reverse().map(l => `<div class="log-entry">· ${esc(l)}</div>`).join('')}
+      </div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════
+// 修炼结果
+// ═══════════════════════════════════════════
+function renderCultivating(state) {
+  const p = state.player;
+  return `
+    <div class="result-screen">
+      <div class="result-icon">🧘</div>
+      <div class="result-msg ${state.message.includes('失败') ? 'fail' : 'success'}">${esc(state.message)}</div>
+      ${p ? `
+        <div style="color:var(--gray);margin:10px 0">当前修为: ${fmt(p.cult)} / ${fmt(p.maxCult)}</div>
+        <div class="bar-wrap" style="width:300px;margin:0 auto">
+          <div class="bar-fill bar-cult" style="width:${pct(p.cult,p.maxCult)}%"></div>
+        </div>
+      ` : ''}
+      <div class="back-row"><button class="back-btn" onclick="renderScreen()">继续修仙 →</button></div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════
+// 战斗界面
+// ═══════════════════════════════════════════
+function renderCombat(state) {
+  const p = state.player;
+  const m = state.monster;
+  if (!m) { renderScreen(); return ''; }
+  const log = state.combatLog || [];
+
+  return `
+    <div class="combat-screen">
+      <div class="combat-vs">
+        <div class="combat-card player" id="player-card">
+          <h3 style="color:var(--sky)">${esc(p.name)}</h3>
+          <div style="color:var(--gray);font-size:12px">${p.realm} · ${p.layer}层</div>
+          <div class="hp-text">HP: ${p.hp}/${p.maxHp}</div>
+          <div class="bar-wrap"><div class="bar-fill bar-hp" style="width:${pct(p.hp,p.maxHp)}%"></div></div>
+        </div>
+        <div class="vs-icon">⚔️</div>
+        <div class="combat-card monster" id="monster-card">
+          <h3 style="color:var(--blood)">${esc(m.name)}</h3>
+          <div class="hp-text">HP: ${m.hp}/${m.maxHp}</div>
+          <div class="bar-wrap"><div class="bar-fill bar-hp" style="width:${pct(m.hp,m.maxHp)}%"></div></div>
+          <div style="color:var(--gray);font-size:12px;margin-top:4px">攻:${m.atk} 防:${m.def} 💎${m.reward}</div>
+        </div>
+      </div>
+
+      <div class="combat-actions">
+        <button class="combat-btn" onclick="combatAction('attack')">⚔️ 攻击</button>
+        <button class="combat-btn" onclick="combatItemMode()">💊 丹药</button>
+        <button class="combat-btn flee" onclick="combatAction('flee')">🏃 逃跑</button>
+      </div>
+      <div id="combat-items" style="display:none;" class="combat-actions"></div>
+
+      <div class="combat-log panel">
+        ${log.slice(-12).map(l => {
+          let cls = 'log-msg';
+          if (l.includes('暴击')) cls += ' crit';
+          if (l.includes('战胜') || l.includes('获得')) cls += ' reward';
+          return `<div class="${cls}">· ${esc(l)}</div>`;
+        }).join('')}
+      </div>
+    </div>`;
+}
+
+async function combatAction(action, itemIndex) {
+  const state = await api('/combat-action', { action, itemIndex: itemIndex || -1 });
+  if (state.screen === 'main' || state.screen === 'gameover') {
+    renderScreen();
+    return;
+  }
+  // 更新战斗界面
+  document.getElementById('app').innerHTML = renderCombat(state);
+  // 动画：攻击时抖动
+  if (action === 'attack') {
+    document.getElementById('monster-card')?.classList.add('damaged');
+    setTimeout(() => document.getElementById('monster-card')?.classList.remove('damaged'), 400);
+    document.getElementById('player-card')?.classList.add('damaged');
+    setTimeout(() => document.getElementById('player-card')?.classList.remove('damaged'), 400);
+  }
+  // 滚动日志
+  const logEl = document.querySelector('.combat-log');
+  if (logEl) logEl.scrollTop = logEl.scrollHeight;
+}
+
+function combatItemMode() {
+  const container = document.getElementById('combat-items');
+  container.style.display = 'flex';
+  // 需要当前背包数据
+  api('/state').then(state => {
+    const pills = (state.player?.inventory || []).filter(i => i.type === 0);
+    container.innerHTML = pills.map((p, i) =>
+      `<button class="combat-btn" onclick="combatAction('item',${i})">💊 ${p.name} x${p.amount}</button>`
+    ).join('') + `<button class="combat-btn" onclick="document.getElementById('combat-items').style.display='none'">✕ 取消</button>`;
+  });
+}
+
+// ═══════════════════════════════════════════
+// 商店
+// ═══════════════════════════════════════════
+function renderShop(state) {
+  const items = state.shopItems || [];
+  const p = state.player;
+  return `
+    <div class="shop-screen">
+      <div class="shop-header">
+        <h2>🏪 坊 市</h2>
+        <div class="stones">💎 灵石: ${fmt(p.stones)}</div>
+      </div>
+      <div class="shop-grid">
+        ${items.map((item, i) => `
+          <div class="shop-card ${p.stones < item.price ? 'disabled' : ''}" onclick="buyItem(${i})">
+            <div class="card-icon">${item.type === 0 ? '💊' : item.type === 1 ? '⚔️' : '🛡️'}</div>
+            <div class="card-name">${item.name}</div>
+            <div class="card-desc">${item.desc}</div>
+            <div class="card-price">💎 ${item.price}</div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="back-row"><button class="back-btn" onclick="renderScreen()">← 返回</button></div>
+    </div>`;
+}
+
+async function buyItem(index) {
+  await api('/shop-buy', { index });
+  const state = await api('/shop');
+  document.getElementById('app').innerHTML = renderShop(state);
+  if (state.message) showToast(state.message);
+}
+
+async function enterShop() {
+  const state = await api('/shop');
+  currentScreen = 'shop';
+  document.getElementById('app').innerHTML = renderShop(state);
+}
+
+// ═══════════════════════════════════════════
+// 背包
+// ═══════════════════════════════════════════
+function renderInventory(state) {
+  const p = state.player;
+  const items = p.inventory || [];
+  return `
+    <div class="inv-screen">
+      <h2 style="color:var(--gold);text-align:center;margin-bottom:16px">🎒 背 包</h2>
+      ${items.length === 0 ? '<p style="text-align:center;color:var(--gray)">空空如也...</p>' : ''}
+      <div class="inv-grid">
+        ${items.map((item, i) => `
+          <div class="inv-card" onclick="useItem(${i})">
+            <div class="inv-icon">${item.type === 0 ? '💊' : item.type === 1 ? '⚔️' : '🛡️'}</div>
+            <div class="inv-info">
+              <div class="inv-name">${item.name} x${item.amount}</div>
+              <div class="inv-desc">${item.desc}</div>
+              ${item.atk > 0 ? `<div class="inv-desc" style="color:var(--blood)">+${item.atk} 攻击</div>` : ''}
+              ${item.def > 0 ? `<div class="inv-desc" style="color:var(--sky)">+${item.def} 防御</div>` : ''}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="back-row"><button class="back-btn" onclick="renderScreen()">← 返回</button></div>
+    </div>`;
+}
+
+async function useItem(index) {
+  await api('/inventory-use', { index });
+  const state = await api('/state');
+  document.getElementById('app').innerHTML = renderInventory(state);
+  if (state.message) showToast(state.message);
+}
+
+async function showInventory() {
+  const state = await api('/state');
+  document.getElementById('app').innerHTML = renderInventory(state);
+}
+
+// ═══════════════════════════════════════════
+// 事件覆盖层
+// ═══════════════════════════════════════════
+function renderEventOverlay(state) {
+  if (!state.event) return;
+  const evt = state.event;
+  const overlay = document.createElement('div');
+  overlay.className = 'event-overlay';
+  overlay.id = 'event-overlay';
+  overlay.innerHTML = `
+    <div class="event-card">
+      <h2>⚡ ${esc(evt.title)}</h2>
+      <div class="event-desc">${esc(evt.desc)}</div>
+      <div class="event-choices">
+        ${evt.choices.map((c, i) => `
+          <button class="event-choice" onclick="chooseEvent(${i})">${esc(c.text)}</button>
+        `).join('')}
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+async function chooseEvent(index) {
+  const overlay = document.getElementById('event-overlay');
+  if (overlay) overlay.remove();
+  const state = await api('/event-choose', { choiceIndex: index });
+  if (state.message) showToast(state.message);
+  renderScreen();
+}
+
+// ═══════════════════════════════════════════
+// 游戏结束 / 胜利
+// ═══════════════════════════════════════════
+function renderGameOver(state) {
+  const p = state.player;
+  return `
+    <div class="end-screen gameover">
+      <h1>💀 身 死 道 消</h1>
+      <div class="end-stats">
+        ${p ? `
+          最终境界: ${p.realm} ${p.layer}层<br>
+          击杀妖兽: ${p.totalKills} · 灵石: ${fmt(p.stones)}
+        ` : ''}
+      </div>
+      <p style="color:var(--gray)">修仙之路九死一生，轮回再战！</p>
+      <button class="title-btn primary" style="margin-top:20px" onclick="restartGame()">重新开始</button>
+    </div>`;
+}
+
+function renderVictory(state) {
+  const p = state.player;
+  return `
+    <div class="end-screen victory">
+      <h1>🎉 飞 升 成 功 🎉</h1>
+      <p style="color:var(--jade);font-size:18px">九转功成，白日飞升！</p>
+      <div class="end-stats">
+        ${p ? `
+          击杀妖兽: ${p.totalKills} · 灵石: ${fmt(p.stones)}
+        ` : ''}
+      </div>
+      <button class="title-btn primary" style="margin-top:20px" onclick="restartGame()">再入轮回</button>
+    </div>`;
+}
+
+async function restartGame() {
+  await api('/new-game', { name: '新修士' });
+  location.reload();
+}
+
+// ═══════════════════════════════════════════
+// 通用操作
+// ═══════════════════════════════════════════
+async function cultivate() { await api('/cultivate'); renderScreen(); }
+async function startCombat() { await api('/combat-start'); renderScreen(); }
+async function breakthrough() { await api('/breakthrough'); renderScreen(); }
+async function rest() { await api('/rest'); renderScreen(); }
+async function saveGame() { await api('/save'); showToast('保存成功！'); }
+
+// ═══════════════════════════════════════════
+// 工具函数
+// ═══════════════════════════════════════════
+function pct(a, b) { return b > 0 ? Math.min(100, Math.round(a / b * 100)) : 0; }
+function fmt(n) { return n >= 10000 ? (n / 10000).toFixed(1) + '万' : String(n); }
+function esc(s) { return String(s).replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+// 启动
+renderScreen();
+</script>
+</body>
+</html>
